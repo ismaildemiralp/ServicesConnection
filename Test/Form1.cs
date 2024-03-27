@@ -111,7 +111,7 @@ namespace Test
 
                 // Test Redis connection
                 var db = redisConnection.GetDatabase();
-                db.StringSet("sampleKey", "Hello, Redis!");
+                db.StringSet("IdltestKey", "Hello, Redis!");
 
                 // Retrieve the data from Redis
                 var value = db.StringGet("sampleKey");
