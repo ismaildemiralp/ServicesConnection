@@ -10,9 +10,9 @@ namespace Test
 {
     public partial class Form1 : Form
     {
-        private const int DefaultRedisPort = 6379; // Default Redis port
+        private const int DefaultRedisPort = 6379; 
         private ConnectionMultiplexer redisConnection;
-        private static readonly Int32 db = 0; // default redis database index
+        private static readonly Int32 db = 0; 
         private IElasticClient _elasticClient;
         public Form1()
         {
@@ -84,7 +84,7 @@ namespace Test
         {
             string redisServerIP = txtredis.Text.Trim();
 
-            // Check if the text box is empty
+            
             if (string.IsNullOrWhiteSpace(redisServerIP))
             {
                 MessageBox.Show("IP adres girilmelidir, boş bırakılamaz. Geçerli IP adresi girilmelidir.", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -97,7 +97,6 @@ namespace Test
                 return;
             }
 
-            // Create a connection to the Redis server with the default port
             var redisOptions = new ConfigurationOptions
             {
                 EndPoints = { { redisServerIP, DefaultRedisPort } },
@@ -106,14 +105,11 @@ namespace Test
 
             try
             {
-                // Connect to Redis
                 redisConnection = ConnectionMultiplexer.Connect(redisOptions);
 
-                // Test Redis connection
                 var db = redisConnection.GetDatabase();
                 db.StringSet("IdltestKey", "Hello, Redis!");
 
-                // Retrieve the data from Redis
                 var value = db.StringGet("sampleKey");
 
                 MessageBox.Show("Redis bağlantısı başarıyla gerçekleştirildi.");
@@ -124,7 +120,6 @@ namespace Test
             }
         }
 
-        // Function to check if a string is a valid IP address
         private bool IsValidIpAddress(string ipAddress)
         {
             IPAddress? address;
@@ -155,10 +150,9 @@ namespace Test
         private void btnsql_Click(object sender, EventArgs e)
         {
             string serverName = txtsqlswname.Text.Trim();
-            string username = txtsqlswuname.Text.Trim(); // Replace with your SQL Server username
-            string password = txtsqlswpass.Text; // Replace with your SQL Server password
+            string username = txtsqlswuname.Text.Trim(); 
+            string password = txtsqlswpass.Text; 
 
-            // Database and table names
             string databaseName = "NewDatabase";
             string tableName = "NewTable";
 
@@ -168,17 +162,14 @@ namespace Test
                 return;
             }
 
-            // Check if the server name is a valid IP address or hostname
             if (!IsValidIP(serverName) && !IsValidHostname(serverName))
             {
                 MessageBox.Show("IP adres girilmelidir, boş bırakılamaz. Geçerli IP adresi girilmelidir.", "Hata", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            // Connection string for the master database
             string masterConnectionString = $"Data Source={serverName};Initial Catalog=master;User ID={username};Password={password}";
 
-            // SQL statements to create the database and table
             string createDatabaseSql = $"CREATE DATABASE [{databaseName}]";
             string createTableSql = $"USE [{databaseName}]; CREATE TABLE [{tableName}] (Id INT IDENTITY(1,1), ColumnName NVARCHAR(255))";
 
@@ -194,10 +185,8 @@ namespace Test
                         createDbCommand.ExecuteNonQuery();
                     }
 
-                    // Switch to the new database
                     masterConnection.ChangeDatabase(databaseName);
 
-                    // Create a table in the new database
                     using (SqlCommand createTableCommand = new SqlCommand(createTableSql, masterConnection))
                     {
                         createTableCommand.ExecuteNonQuery();
@@ -277,7 +266,6 @@ namespace Test
                 var username = txtUname.Text;
                 var password = txtPassword.Text;
 
-                // Elasticsearch bağlantı ayarlarını oluştur
                 var settings = new ConnectionSettings(new Uri(elasticsearchUrl))
                     .BasicAuthentication(username, password);
 
@@ -304,15 +292,13 @@ namespace Test
                     return;
                 }
 
-                // Test verisi oluştur
                 var testData = new
                 {
                     Timestamp = DateTime.UtcNow,
-                    Message = txtMessage.Text,  // txtMessage adında bir TextBox kullanıldığından emin olun
-                    Level = txtLevel.Text  // txtLevel adında bir TextBox kullanıldığından emin olun
+                    Message = txtMessage.Text,  
+                    Level = txtLevel.Text  
                 };
 
-                // Elasticsearch'e test verisini gönder
                 var indexResponse = _elasticClient.Index(testData, idx => idx
                     .Index(txtIndex.Text)
                 );
@@ -320,7 +306,7 @@ namespace Test
                 if (indexResponse.IsValid)
                 {
                     MessageBox.Show("Test verisi Elasticsearch'e başarıyla gönderildi.");
-                    // Formu yenile
+                    
                     this.Invalidate();
                 }
                 else
